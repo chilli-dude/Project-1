@@ -8,8 +8,8 @@
 
 body {
   font-family: "Inter", system-ui, -apple-system, sans-serif;
-  background-color: #0f172a;
-  color: #e2e8f0;
+  background-color: #f1f0f9;
+  color: #1e1b3a;
   min-height: 100vh;
 }
 
@@ -19,46 +19,54 @@ body {
 
 /* Leaflet overrides */
 .leaflet-container {
-  background: #1e293b;
-  border-radius: 0.75rem;
+  background: #e8e7f0;
+  border-radius: 1rem;
 }
 
 .leaflet-control-zoom a {
-  background-color: #1e293b !important;
-  color: #e2e8f0 !important;
-  border-color: #334155 !important;
+  background-color: #ffffff !important;
+  color: #1e1b3a !important;
+  border-color: #e2e0ef !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #334155 !important;
+  background-color: #f1f0f9 !important;
 }
 
 /* Draw toolbar styling */
 .leaflet-draw-toolbar a {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
+  background-color: #ffffff !important;
+  border-color: #e2e0ef !important;
 }
 
 .leaflet-draw-actions a {
-  background-color: #1e293b !important;
-  color: #e2e8f0 !important;
-  border-color: #334155 !important;
+  background-color: #ffffff !important;
+  color: #1e1b3a !important;
+  border-color: #e2e0ef !important;
+}
+
+.leaflet-draw-actions li:first-child a {
+  border-radius: 4px 0 0 4px;
+}
+
+.leaflet-draw-actions li:last-child a {
+  border-radius: 0 4px 4px 0;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #c7c4d9;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #a8a4c0;
 }
