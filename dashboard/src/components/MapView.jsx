@@ -17,10 +17,18 @@ export default function MapView({ onPolygonCreated, onPolygonDeleted }) {
       attributionControl: false,
     });
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-      maxZoom: 19,
-      attribution: "&copy; CartoDB",
-    }).addTo(map);
+    const satellite = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19, attribution: "&copy; Esri" }
+    );
+
+    const labels = L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      { maxZoom: 19, attribution: "&copy; Esri" }
+    );
+
+    satellite.addTo(map);
+    labels.addTo(map);
 
     const drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
