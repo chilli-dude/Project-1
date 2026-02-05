@@ -46,9 +46,9 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
   const portfolioRisk = computeAggregateRisk(farms);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-[30px]">
       {/* Portfolio summary */}
-      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl p-5 text-white">
+      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl p-3 text-white">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Portfolio Risk</span>
           <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/20">

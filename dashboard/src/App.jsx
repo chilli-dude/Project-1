@@ -33,9 +33,9 @@ function SummaryCards({ farms }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[30px] mb-[30px]">
       {cards.map((card) => (
-        <div key={card.label} className="bg-white rounded-2xl px-6 py-5 flex items-center gap-4 shadow-sm">
+        <div key={card.label} className="bg-white rounded-2xl p-3 flex items-center gap-4 shadow-sm">
           <div className={`w-12 h-12 rounded-xl ${card.bg} flex items-center justify-center`}>
             <svg className={`w-6 h-6 ${card.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
@@ -58,17 +58,17 @@ function OverviewPage({ farms, selectedFarmId, setSelectedFarmId, selectedMetric
   return (
     <>
       <SummaryCards farms={farms} />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-[30px] min-h-0">
         <div className="lg:col-span-5 bg-white rounded-2xl shadow-sm overflow-hidden min-h-[450px]">
           <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={setSelectedFarmId} />
         </div>
-        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm p-5 overflow-hidden flex flex-col max-h-[650px]">
+        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm p-3 overflow-hidden flex flex-col max-h-[650px]">
           <h2 className="text-base font-bold text-gray-900 mb-4 px-1">Portfolio</h2>
           <div className="flex-1 overflow-y-auto min-h-0">
             <PortfolioPanel farms={farms} selectedFarmId={selectedFarmId} onSelectFarm={(id) => { setSelectedFarmId(id); }} onDeleteFarm={handleDeleteFarm} />
           </div>
         </div>
-        <div className="lg:col-span-4 bg-white rounded-2xl shadow-sm p-5 overflow-hidden flex flex-col max-h-[650px]">
+        <div className="lg:col-span-4 bg-white rounded-2xl shadow-sm p-3 overflow-hidden flex flex-col max-h-[650px]">
           {selectedFarm ? (
             <>
               <div className="flex items-center justify-between mb-4 px-1">
@@ -93,7 +93,7 @@ function OverviewPage({ farms, selectedFarmId, setSelectedFarmId, selectedMetric
         </div>
       </div>
       {selectedFarm && (
-        <div className="mt-6">
+        <div className="mt-[30px]">
           <MetricCharts data={selectedFarm.metricsData} selectedMetric={selectedMetric} />
         </div>
       )}
@@ -113,8 +113,8 @@ function MapPage({ farms, selectedFarmId, setSelectedFarmId, handlePolygonDrawn 
 // ---- Portfolio page ----
 function PortfolioPage({ farms, selectedFarmId, setSelectedFarmId, handleDeleteFarm, setActiveNav }) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+      <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-3">
         <h2 className="text-lg font-bold text-gray-900 mb-5">All Farms</h2>
         <PortfolioPanel
           farms={farms}
@@ -126,7 +126,7 @@ function PortfolioPage({ farms, selectedFarmId, setSelectedFarmId, handleDeleteF
       <div className="lg:col-span-2">
         <SummaryCards farms={farms} />
         {farms.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <div className="bg-white rounded-2xl shadow-sm p-3">
             <h2 className="text-lg font-bold text-gray-900 mb-5">Portfolio Risk Analysis</h2>
             <MetricCharts data={farms[0].metricsData} selectedMetric="soil_moisture" />
           </div>
@@ -160,7 +160,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
   return (
     <div>
       {/* Farm header */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+      <div className="bg-white rounded-2xl shadow-sm p-3 mb-[30px]">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">{farm.name}</h2>
@@ -184,7 +184,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-[30px]">
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -202,7 +202,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
 
       {/* Tab content */}
       {tab === "metrics" && (
-        <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="bg-white rounded-2xl shadow-sm p-3">
           <MetricsPanel data={farm.metricsData} selectedMetric={selectedMetric} onSelectMetric={setSelectedMetric} />
         </div>
       )}
@@ -210,7 +210,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
         <MetricCharts data={farm.metricsData} selectedMetric={selectedMetric} />
       )}
       {tab === "details" && (
-        <div className="bg-white rounded-2xl shadow-sm p-6">
+        <div className="bg-white rounded-2xl shadow-sm p-3">
           <FarmDetails farm={farm} onUpdateDetails={onUpdateDetails} />
         </div>
       )}

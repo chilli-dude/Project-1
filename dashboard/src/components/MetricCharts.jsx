@@ -32,7 +32,7 @@ function CustomTooltip({ active, payload, label, unit }) {
 
 function TimeSeriesChart({ data, metric }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6">
+    <div className="bg-white rounded-2xl shadow-sm p-3">
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-base font-bold text-gray-900">
           {metric.name} Trend
@@ -84,7 +84,7 @@ function RiskOverviewChart({ data }) {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6">
+    <div className="bg-white rounded-2xl shadow-sm p-3">
       <h3 className="text-base font-bold text-gray-900 mb-4">Risk Overview</h3>
       <ResponsiveContainer width="100%" height={300}>
         <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
@@ -118,7 +118,7 @@ function ComparisonBarChart({ data }) {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-6">
+    <div className="bg-white rounded-2xl shadow-sm p-3">
       <h3 className="text-base font-bold text-gray-900 mb-4">Metric Comparison</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={barData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
@@ -153,9 +153,9 @@ export default function MetricCharts({ data, selectedMetric }) {
   const tsData = data.timeSeries[selectedMetric];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-[30px]">
       {metric && <TimeSeriesChart data={tsData} metric={metric} />}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-[30px]">
         <RiskOverviewChart data={data} />
         <ComparisonBarChart data={data} />
       </div>
