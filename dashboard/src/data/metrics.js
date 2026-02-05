@@ -1,3 +1,5 @@
+import { fetchRealWeatherData, REAL_METRIC_IDS } from "../api/openmeteo";
+
 export const METRICS = [
   {
     id: "soil_moisture",
@@ -5,9 +7,10 @@ export const METRICS = [
     unit: "%",
     icon: "💧",
     color: "#3b82f6",
-    description: "Volumetric water content in topsoil (0–30 cm)",
+    description: "Volumetric water content in topsoil (0-30 cm)",
     riskThresholds: { low: 40, high: 80 },
     range: [0, 100],
+    source: "simulated",
   },
   {
     id: "ndvi",
@@ -15,9 +18,10 @@ export const METRICS = [
     unit: "",
     icon: "🌿",
     color: "#22c55e",
-    description: "Normalized Difference Vegetation Index — crop vigour",
+    description: "Normalized Difference Vegetation Index - crop vigour",
     riskThresholds: { low: 0.3, high: 0.8 },
     range: [0, 1],
+    source: "simulated",
   },
   {
     id: "precipitation",
@@ -28,6 +32,7 @@ export const METRICS = [
     description: "Monthly cumulative rainfall",
     riskThresholds: { low: 30, high: 200 },
     range: [0, 350],
+    source: "real",
   },
   {
     id: "temperature",
@@ -38,6 +43,7 @@ export const METRICS = [
     description: "Max daily temperature over the period",
     riskThresholds: { low: 10, high: 35 },
     range: [-10, 50],
+    source: "real",
   },
   {
     id: "evapotranspiration",
@@ -45,9 +51,10 @@ export const METRICS = [
     unit: "mm/day",
     icon: "☀️",
     color: "#f59e0b",
-    description: "Reference evapotranspiration rate (ET₀)",
+    description: "Reference evapotranspiration rate (ET0)",
     riskThresholds: { low: 2, high: 7 },
     range: [0, 12],
+    source: "real",
   },
   {
     id: "soil_carbon",
@@ -58,6 +65,7 @@ export const METRICS = [
     description: "Organic carbon concentration in topsoil",
     riskThresholds: { low: 1, high: 4 },
     range: [0, 8],
+    source: "simulated",
   },
   {
     id: "wind_speed",
@@ -65,9 +73,10 @@ export const METRICS = [
     unit: "km/h",
     icon: "💨",
     color: "#14b8a6",
-    description: "Average wind speed — erosion & crop damage risk",
+    description: "Average wind speed - erosion & crop damage risk",
     riskThresholds: { low: 15, high: 40 },
     range: [0, 80],
+    source: "real",
   },
   {
     id: "flood_risk",
@@ -75,9 +84,10 @@ export const METRICS = [
     unit: "",
     icon: "🌊",
     color: "#0ea5e9",
-    description: "Composite flood susceptibility score (0–10)",
+    description: "Composite flood susceptibility score (0-10)",
     riskThresholds: { low: 3, high: 7 },
     range: [0, 10],
+    source: "simulated",
   },
   {
     id: "drought_severity",
@@ -88,6 +98,7 @@ export const METRICS = [
     description: "Palmer Drought Severity Index (PDSI)",
     riskThresholds: { low: -2, high: 2 },
     range: [-6, 6],
+    source: "simulated",
   },
   {
     id: "biodiversity",
@@ -98,6 +109,7 @@ export const METRICS = [
     description: "Shannon diversity index for surrounding ecosystem",
     riskThresholds: { low: 1.5, high: 3.5 },
     range: [0, 5],
+    source: "simulated",
   },
 ];
 
@@ -144,6 +156,7 @@ export function generateMetricsForRegion(polygonCoords) {
     area: computeArea(polygonCoords),
     current,
     timeSeries,
+    realDataLoaded: false,
   };
 }
 
@@ -184,7 +197,6 @@ export function getRiskLevel(metric, value) {
 }
 
 const RISK_SCORES = { low: 1, moderate: 2, high: 3 };
-const SCORE_TO_RISK = { 1: "low", 2: "moderate", 3: "high" };
 
 export function computeFarmRisk(metricsData) {
   if (!metricsData) return "low";
@@ -221,5 +233,43 @@ export function createFarm(name, group, coords) {
     group,
     coords,
     metricsData,
+    details: {
+      projectType: "",
+      projectLength: "",
+      yearStart: "",
+      yearEnd: "",
+      totalBudget: "",
+      contactName: "",
+      contactEmail: "",
+      contactPhone: "",
+    },
+  };
+}
+
+export async function enrichFarmWithRealData(farm) {
+  const { lat, lng } = farm.metricsData.centroid;
+  const realData = await fetchRealWeatherData(lat, lng);
+  if (!realData) return farm;
+
+  const newCurrent = { ...farm.metricsData.current };
+  const newTimeSeries = { ...farm.metricsData.timeSeries };
+
+  for (const id of REAL_METRIC_IDS) {
+    if (realData.current[id] !== undefined) {
+      newCurrent[id] = realData.current[id];
+    }
+    if (realData.timeSeries[id]) {
+      newTimeSeries[id] = realData.timeSeries[id];
+    }
+  }
+
+  return {
+    ...farm,
+    metricsData: {
+      ...farm.metricsData,
+      current: newCurrent,
+      timeSeries: newTimeSeries,
+      realDataLoaded: true,
+    },
   };
 }

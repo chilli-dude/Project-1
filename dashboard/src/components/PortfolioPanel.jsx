@@ -14,20 +14,20 @@ const riskLabels = { low: "Low", moderate: "Med", high: "High" };
 
 function RiskBadge({ risk }) {
   return (
-    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${riskColors[risk]}`}>
+    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${riskColors[risk]}`}>
       {riskLabels[risk]}
     </span>
   );
 }
 
-export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, onDeleteFarm }) {
+export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, onDeleteFarm, onSelectGroup }) {
   if (farms.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-300 px-4 py-10">
-        <svg className="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+      <div className="flex flex-col items-center justify-center h-full text-gray-300 px-6 py-14">
+        <svg className="w-12 h-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0l-3-3m-7 3H3m2 0l3-3" />
         </svg>
-        <p className="text-xs text-center font-medium text-gray-400">Draw on the map to add farms</p>
+        <p className="text-base text-center font-medium text-gray-400">Draw on the map to add farms</p>
       </div>
     );
   }
@@ -46,17 +46,17 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
   const portfolioRisk = computeAggregateRisk(farms);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Portfolio summary */}
-      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl p-3 text-white">
-        <div className="flex items-center justify-between mb-0.5">
-          <span className="text-[10px] font-semibold uppercase tracking-wider opacity-80">Portfolio Risk</span>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20">
+      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl p-5 text-white">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Portfolio Risk</span>
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/20">
             {riskLabels[portfolioRisk]}
           </span>
         </div>
-        <p className="text-lg font-bold leading-tight">{farms.length} Farm{farms.length !== 1 ? "s" : ""}</p>
-        <p className="text-[11px] opacity-70">
+        <p className="text-2xl font-bold leading-tight">{farms.length} Farm{farms.length !== 1 ? "s" : ""}</p>
+        <p className="text-sm opacity-70 mt-1">
           {groupNames.length} group{groupNames.length !== 1 ? "s" : ""}
         </p>
       </div>
@@ -69,16 +69,19 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
 
         return (
           <div key={groupName}>
-            <div className="flex items-center justify-between mb-1.5 px-0.5">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                <span className="text-xs font-semibold text-gray-700">{groupName}</span>
-                <span className="text-[10px] text-gray-400">({groupFarms.length})</span>
+            <button
+              onClick={() => onSelectGroup && onSelectGroup(groupName)}
+              className="flex items-center justify-between mb-2 px-1 w-full text-left hover:opacity-80 transition-opacity"
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
+                <span className="text-sm font-bold text-gray-700">{groupName}</span>
+                <span className="text-xs text-gray-400 font-medium">({groupFarms.length})</span>
               </div>
               <RiskBadge risk={groupRisk} />
-            </div>
+            </button>
 
-            <div className="space-y-1">
+            <div className="space-y-2">
               {groupFarms.map((farm) => {
                 const farmRisk = computeFarmRisk(farm.metricsData);
                 const isSelected = farm.id === selectedFarmId;
@@ -87,32 +90,35 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
                   <button
                     key={farm.id}
                     onClick={() => onSelectFarm(farm.id)}
-                    className={`w-full text-left px-3 py-2 rounded-xl border transition-all duration-150 group relative
+                    className={`w-full text-left px-4 py-3 rounded-xl border transition-all duration-150 group relative
                       ${isSelected
                         ? "bg-violet-50 border-violet-200 shadow-sm"
                         : "bg-gray-50/60 border-transparent hover:bg-gray-50 hover:border-gray-100"
                       }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="w-1 h-5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="w-1.5 h-6 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
                         <div className="min-w-0">
-                          <span className={`text-xs font-semibold block truncate ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
+                          <span className={`text-sm font-semibold block truncate ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
                             {farm.name}
                           </span>
-                          <span className="text-[10px] text-gray-400">
+                          <span className="text-xs text-gray-400">
                             ~{farm.metricsData.area} km²
+                            {farm.metricsData.realDataLoaded && (
+                              <span className="ml-1.5 text-emerald-500 font-medium">LIVE</span>
+                            )}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         <RiskBadge risk={farmRisk} />
                         <button
                           onClick={(e) => { e.stopPropagation(); onDeleteFarm(farm.id); }}
-                          className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-300 hover:text-rose-400 transition-all"
+                          className="opacity-0 group-hover:opacity-100 p-1 rounded text-gray-300 hover:text-rose-400 transition-all"
                           title="Remove farm"
                         >
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>

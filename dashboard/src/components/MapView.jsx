@@ -45,22 +45,12 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       draw: {
         polygon: {
           allowIntersection: false,
-          shapeOptions: {
-            color: "#7c3aed",
-            weight: 2,
-            fillColor: "#7c3aed",
-            fillOpacity: 0.15,
-          },
+          shapeOptions: { color: "#7c3aed", weight: 2, fillColor: "#7c3aed", fillOpacity: 0.15 },
         },
         polyline: false,
         circle: false,
         rectangle: {
-          shapeOptions: {
-            color: "#7c3aed",
-            weight: 2,
-            fillColor: "#7c3aed",
-            fillOpacity: 0.15,
-          },
+          shapeOptions: { color: "#7c3aed", weight: 2, fillColor: "#7c3aed", fillOpacity: 0.15 },
         },
         marker: false,
         circlemarker: false,
@@ -72,10 +62,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
 
     map.on(L.Draw.Event.CREATED, (e) => {
       const layer = e.layer;
-      const coords = layer.getLatLngs()[0].map((ll) => ({
-        lat: ll.lat,
-        lng: ll.lng,
-      }));
+      const coords = layer.getLatLngs()[0].map((ll) => ({ lat: ll.lat, lng: ll.lng }));
       onPolygonDrawn(coords);
     });
 
@@ -87,7 +74,6 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
     };
   }, []);
 
-  // Sync farm polygons onto the map
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -127,7 +113,6 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       }
 
       const layerGroup = new L.FeatureGroup();
-
       const latlngs = farm.coords.map((c) => [c.lat, c.lng]);
       const polygon = L.polygon(latlngs, {
         color: isSelected ? "#ffffff" : color,
@@ -146,9 +131,9 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
             background: rgba(255,255,255,0.92);
             backdrop-filter: blur(4px);
             color: #1e1b3a;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 700;
-            padding: 2px 8px;
+            padding: 3px 10px;
             border-radius: 8px;
             border: 2px solid ${color};
             white-space: nowrap;
@@ -171,7 +156,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
   return (
     <div className="relative h-full w-full">
       <div ref={mapRef} className="h-full w-full rounded-2xl" />
-      <div className="absolute top-3 left-3 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 text-xs text-gray-500 font-medium shadow-sm border border-gray-200">
+      <div className="absolute top-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-gray-500 font-medium shadow-sm border border-gray-200">
         Draw polygons to add farm sites
       </div>
     </div>
