@@ -182,3 +182,44 @@ export function getRiskLevel(metric, value) {
   if (value > riskThresholds.high) return "low";
   return "moderate";
 }
+
+const RISK_SCORES = { low: 1, moderate: 2, high: 3 };
+const SCORE_TO_RISK = { 1: "low", 2: "moderate", 3: "high" };
+
+export function computeFarmRisk(metricsData) {
+  if (!metricsData) return "low";
+  let total = 0;
+  METRICS.forEach((metric) => {
+    const value = metricsData.current[metric.id];
+    const risk = getRiskLevel(metric, value);
+    total += RISK_SCORES[risk];
+  });
+  const avg = total / METRICS.length;
+  if (avg >= 2.5) return "high";
+  if (avg >= 1.5) return "moderate";
+  return "low";
+}
+
+export function computeAggregateRisk(farms) {
+  if (!farms || farms.length === 0) return "low";
+  let total = 0;
+  farms.forEach((farm) => {
+    total += RISK_SCORES[computeFarmRisk(farm.metricsData)];
+  });
+  const avg = total / farms.length;
+  if (avg >= 2.5) return "high";
+  if (avg >= 1.5) return "moderate";
+  return "low";
+}
+
+let _nextId = 1;
+export function createFarm(name, group, coords) {
+  const metricsData = generateMetricsForRegion(coords);
+  return {
+    id: _nextId++,
+    name,
+    group,
+    coords,
+    metricsData,
+  };
+}
