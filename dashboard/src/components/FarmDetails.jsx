@@ -5,7 +5,7 @@ const PROJECT_TYPES = [
 
 function Field({ label, value, onChange, type = "text", placeholder = "", options }) {
   const base =
-    "w-full px-8 py-6 rounded-xl bg-[#f1f0f9] border border-gray-200 text-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400";
+    "w-full px-8 py-6 rounded-xl bg-[#f5f5f5] border border-gray-200 text-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400";
 
   return (
     <div>

@@ -31,7 +31,7 @@ function SummaryCards({ farms, selectedFarm }) {
   });
 
   const cards = [
-    { label: "Total Farms", value: farms.length, bg: "bg-violet-100", iconColor: "text-violet-600", icon: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" },
+    { label: "Total Farms", value: farms.length, bg: "bg-red-100", iconColor: "text-red-600", icon: "M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" },
     { label: "Farm Groups", value: groups.length, bg: "bg-sky-100", iconColor: "text-sky-600", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
     { label: selectedFarm ? "Farm Area" : "Total Area", value: `${totalArea.toFixed(1)} km²`, bg: "bg-emerald-100", iconColor: "text-emerald-600", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" },
     { label: selectedFarm ? "Farm Risk Alerts" : "High Risk Alerts", value: highRiskCount, bg: "bg-rose-100", iconColor: "text-rose-500", icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" },
@@ -78,7 +78,7 @@ function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetr
             <>
               <div className="flex items-center justify-between" style={{ marginBottom: "var(--spacing-md)" }}>
                 <h2 className="text-xl font-bold text-gray-900">{selectedFarm.name}</h2>
-                <span className="text-base font-medium px-3 py-1 rounded-full bg-violet-100 text-violet-600">{selectedFarm.group}</span>
+                <span className="text-base font-medium px-3 py-1 rounded-full bg-red-100 text-red-600">{selectedFarm.group}</span>
               </div>
               <div className="flex-1 overflow-y-auto min-h-0">
                 <MetricsPanel data={selectedFarm.metricsData} selectedMetric={selectedMetric} onSelectMetric={setSelectedMetric} />
@@ -202,7 +202,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
             onClick={() => setTab(t.id)}
             className={`px-8 py-4 rounded-xl text-base font-semibold transition-all ${
               tab === t.id
-                ? "bg-violet-100 text-violet-700"
+                ? "bg-red-100 text-red-700"
                 : "bg-white text-gray-400 hover:bg-gray-50 shadow-sm"
             }`}
           >
@@ -288,8 +288,11 @@ export default function App() {
       {/* Sidebar */}
       <aside className="w-72 bg-white flex flex-col flex-shrink-0 border-r border-gray-100 min-h-screen">
         <div className="flex items-center gap-3" style={{ padding: "var(--sidebar-padding)" }}>
-          <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-xl font-extrabold text-white">
-            F
+          <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center">
+            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5c-4.5-3-7.5-6.5-7.5-10a5 5 0 0110 0c1.5-2 4-3.5 6-2.5.5.25.8.7.5 1.2C20 11 17 14 12 19.5z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19.5V10" />
+            </svg>
           </div>
           <span className="text-xl font-bold text-gray-900 tracking-tight">FarmRisk</span>
         </div>
@@ -297,7 +300,7 @@ export default function App() {
         <div style={{ padding: "0 var(--sidebar-padding)", marginBottom: "var(--sidebar-padding)" }}>
           <button
             onClick={() => setActiveNav("map")}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-base font-bold rounded-xl px-6 py-4 shadow-md shadow-violet-200 hover:shadow-lg hover:shadow-violet-300 transition-all"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-base font-bold rounded-xl px-6 py-4 shadow-md shadow-red-200 hover:shadow-lg hover:shadow-red-300 transition-all"
           >
             Add farm
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -316,11 +319,11 @@ export default function App() {
                 onClick={() => setActiveNav(item.id)}
                 className={`w-full flex items-center gap-3 px-6 py-4 rounded-xl text-base font-semibold transition-all ${
                   isActive
-                    ? "bg-violet-50 text-violet-700"
+                    ? "bg-red-50 text-red-700"
                     : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
                 }`}
               >
-                <svg className={`w-6 h-6 ${isActive ? "text-violet-500" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <svg className={`w-6 h-6 ${isActive ? "text-red-500" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                   <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                 </svg>
                 {item.label}
@@ -330,11 +333,11 @@ export default function App() {
         </nav>
 
         <div style={{ padding: "0 var(--sidebar-padding) var(--sidebar-padding)" }}>
-          <div className="bg-violet-50 rounded-2xl text-center" style={{ padding: "var(--spacing-sm)" }}>
-            <p className="text-base font-semibold text-violet-700 mb-1">
+          <div className="bg-red-50 rounded-2xl text-center" style={{ padding: "var(--spacing-sm)" }}>
+            <p className="text-base font-semibold text-red-700 mb-1">
               {farms.length} farm{farms.length !== 1 ? "s" : ""} tracked
             </p>
-            <p className="text-sm text-violet-400">
+            <p className="text-sm text-red-400">
               {existingGroups.length} group{existingGroups.length !== 1 ? "s" : ""}
             </p>
           </div>
@@ -348,11 +351,11 @@ export default function App() {
             <h2 className="text-xl font-bold text-gray-900 capitalize">{activeNav === "farm" && selectedFarm ? selectedFarm.name : NAV_ITEMS.find(n => n.id === activeNav)?.label || activeNav}</h2>
             <div className="flex items-center gap-4">
               {farms.length > 0 && (
-                <span className="text-base font-medium px-5 py-2 rounded-full bg-violet-100 text-violet-600">
+                <span className="text-base font-medium px-5 py-2 rounded-full bg-red-100 text-red-600">
                   {farms.length} farm{farms.length !== 1 ? "s" : ""} in portfolio
                 </span>
               )}
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-base font-bold text-white">
+              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-base font-bold text-white">
                 U
               </div>
             </div>

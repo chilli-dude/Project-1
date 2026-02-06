@@ -41,7 +41,7 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
             onClick={() => onSelectMetric(metric.id)}
             className={`w-full text-left rounded-xl border transition-all duration-150
               ${isSelected
-                ? "bg-violet-50 border-violet-200 shadow-sm"
+                ? "bg-red-50 border-red-200 shadow-sm"
                 : "bg-gray-50/50 border-transparent hover:bg-gray-50 hover:border-gray-100"
               }`}
             style={{ padding: "var(--spacing-sm) var(--spacing-md)" }}
@@ -50,7 +50,7 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: metric.color }} />
                 <div>
-                  <span className={`text-base font-semibold ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
+                  <span className={`text-base font-semibold ${isSelected ? "text-red-700" : "text-gray-700"}`}>
                     {metric.name}
                   </span>
                   {isReal && data.realDataLoaded && (

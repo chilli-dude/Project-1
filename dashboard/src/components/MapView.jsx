@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet-draw";
 
 const GROUP_COLORS = [
-  "#7c3aed", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444",
+  "#dc2626", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444",
   "#ec4899", "#14b8a6", "#6366f1", "#d97706", "#8b5cf6",
 ];
 
@@ -50,13 +50,11 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       draw: {
         polygon: {
           allowIntersection: false,
-          shapeOptions: { color: "#7c3aed", weight: 2, fillColor: "#7c3aed", fillOpacity: 0.15 },
+          shapeOptions: { color: "#dc2626", weight: 2, fillColor: "#dc2626", fillOpacity: 0.15 },
         },
         polyline: false,
         circle: false,
-        rectangle: {
-          shapeOptions: { color: "#7c3aed", weight: 2, fillColor: "#7c3aed", fillOpacity: 0.15 },
-        },
+        rectangle: false,
         marker: false,
         circlemarker: false,
       },
@@ -101,7 +99,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
     });
 
     farms.forEach((farm) => {
-      const color = groupColorMap[farm.group] || "#7c3aed";
+      const color = groupColorMap[farm.group] || "#dc2626";
       const isSelected = farm.id === selectedFarmId;
 
       if (farmLayersRef.current.has(farm.id)) {

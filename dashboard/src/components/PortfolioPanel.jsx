@@ -2,7 +2,7 @@ import { useState } from "react";
 import { computeFarmRisk, computeAggregateRisk } from "../data/metrics";
 
 const GROUP_COLORS = [
-  "#7c3aed", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444",
+  "#dc2626", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444",
   "#ec4899", "#14b8a6", "#6366f1", "#d97706", "#8b5cf6",
 ];
 
@@ -55,7 +55,7 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
   return (
     <div className="flex flex-col" style={{ gap: "var(--widget-gap)" }}>
       {/* Portfolio summary */}
-      <div className="bg-gradient-to-r from-violet-500 to-purple-600 text-white" style={{ borderRadius: "var(--widget-radius)", padding: "var(--widget-padding)" }}>
+      <div className="bg-gradient-to-r from-red-500 to-red-600 text-white" style={{ borderRadius: "var(--widget-radius)", padding: "var(--widget-padding)" }}>
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold uppercase tracking-wider opacity-80">Portfolio Risk</span>
           <span className="text-sm font-bold px-3 py-1 rounded-full bg-white/20">
@@ -107,7 +107,7 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
                       onClick={() => onSelectFarm(farm.id)}
                       className={`w-full text-left rounded-xl border transition-all duration-150 group relative
                         ${isSelected
-                          ? "bg-violet-50 border-violet-200 shadow-sm"
+                          ? "bg-red-50 border-red-200 shadow-sm"
                           : "bg-gray-50/60 border-transparent hover:bg-gray-50 hover:border-gray-100"
                         }`}
                       style={{ padding: "var(--spacing-sm) var(--spacing-md)" }}
@@ -116,7 +116,7 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span className="w-1.5 h-7 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
                           <div className="min-w-0">
-                            <span className={`text-base font-semibold block truncate ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
+                            <span className={`text-base font-semibold block truncate ${isSelected ? "text-red-700" : "text-gray-700"}`}>
                               {farm.name}
                             </span>
                             <span className="text-sm text-gray-400">

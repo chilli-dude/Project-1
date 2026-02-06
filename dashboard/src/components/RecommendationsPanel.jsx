@@ -10,7 +10,7 @@ const priorityConfig = {
 function AiHeader() {
   return (
     <div className="flex items-center gap-3" style={{ marginBottom: "var(--widget-gap)" }}>
-      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center flex-shrink-0">
         <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
         </svg>
@@ -25,7 +25,7 @@ function AiHeader() {
 
 function SummaryBar({ summary }) {
   return (
-    <div className="widget-card" style={{ background: "linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)", color: "white" }}>
+    <div className="widget-card" style={{ background: "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)", color: "white" }}>
       <div className="flex items-center justify-between flex-wrap" style={{ gap: "var(--spacing-md)" }}>
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider opacity-80">Total Recommendations</p>
@@ -115,7 +115,7 @@ function RecommendationCard({ rec, defaultExpanded }) {
           <ul className="space-y-2">
             {rec.actions.map((action, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <svg className="w-4 h-4 text-violet-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4" />
                 </svg>
                 {action}
@@ -123,7 +123,7 @@ function RecommendationCard({ rec, defaultExpanded }) {
             ))}
           </ul>
           <div className="flex items-center gap-2 mt-3">
-            <span className="text-xs font-medium px-2 py-0.5 rounded bg-violet-50 text-violet-600">{rec.category}</span>
+            <span className="text-xs font-medium px-2 py-0.5 rounded bg-red-50 text-red-600">{rec.category}</span>
           </div>
         </div>
       )}
@@ -196,7 +196,7 @@ export default function RecommendationsPanel({ farms, selectedFarmId }) {
         {/* Scope indicator */}
         <div className="widget-card flex items-center justify-between flex-wrap" style={{ gap: "var(--spacing-sm)" }}>
           <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-sm text-gray-500">
@@ -219,7 +219,7 @@ export default function RecommendationsPanel({ farms, selectedFarmId }) {
                 onClick={() => setFilterPriority(f.value)}
                 className={`text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
                   filterPriority === f.value
-                    ? "bg-violet-100 text-violet-700"
+                    ? "bg-red-100 text-red-700"
                     : "bg-gray-100 text-gray-400 hover:bg-gray-200"
                 }`}
               >
