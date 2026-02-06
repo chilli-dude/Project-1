@@ -9,27 +9,30 @@ export default function AddFarmModal({ onConfirm, onCancel, existingGroups }) {
   const finalGroup = useNewGroup ? newGroup.trim() : group;
   const canSubmit = name.trim().length > 0 && finalGroup.length > 0;
 
+  const inputClass = "w-full px-8 py-6 rounded-xl bg-[#f1f0f9] border border-gray-200 text-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400";
+
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/30 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-4 p-14">
-        <h3 className="text-3xl font-bold text-gray-900 mb-6">Add Farm Site</h3>
+      <div className="bg-white shadow-xl w-full max-w-4xl mx-4" style={{ borderRadius: "var(--widget-radius)", padding: "var(--spacing-xl) var(--spacing-xl)" }}>
+        <h3 className="text-3xl font-bold text-gray-900" style={{ marginBottom: "var(--widget-gap)" }}>Add Farm Site</h3>
 
         {/* Name */}
-        <label className="block text-lg font-semibold text-gray-500 mb-3">Farm Name</label>
+        <label className="block text-lg font-semibold text-gray-500" style={{ marginBottom: "var(--spacing-sm)" }}>Farm Name</label>
         <input
           type="text"
           autoFocus
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Farm 1"
-          className="w-full px-8 py-6 rounded-xl bg-[#f1f0f9] border border-gray-200 text-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 mb-6"
+          className={inputClass}
+          style={{ marginBottom: "var(--widget-gap)" }}
         />
 
         {/* Group */}
-        <label className="block text-lg font-semibold text-gray-500 mb-3">Group</label>
+        <label className="block text-lg font-semibold text-gray-500" style={{ marginBottom: "var(--spacing-sm)" }}>Group</label>
 
         {existingGroups.length > 0 && (
-          <div className="flex gap-3 mb-4">
+          <div className="flex gap-3" style={{ marginBottom: "var(--spacing-md)" }}>
             <button
               onClick={() => setUseNewGroup(false)}
               className={`text-base px-6 py-3 rounded-full font-medium transition-colors ${
@@ -57,7 +60,8 @@ export default function AddFarmModal({ onConfirm, onCancel, existingGroups }) {
           <select
             value={group}
             onChange={(e) => setGroup(e.target.value)}
-            className="w-full px-8 py-6 rounded-xl bg-[#f1f0f9] border border-gray-200 text-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 mb-6"
+            className={inputClass}
+            style={{ marginBottom: "var(--widget-gap)" }}
           >
             <option value="">Select a group...</option>
             {existingGroups.map((g) => (
@@ -70,12 +74,13 @@ export default function AddFarmModal({ onConfirm, onCancel, existingGroups }) {
             value={newGroup}
             onChange={(e) => setNewGroup(e.target.value)}
             placeholder="e.g. Cocoa Farms"
-            className="w-full px-8 py-6 rounded-xl bg-[#f1f0f9] border border-gray-200 text-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400 mb-6"
+            className={inputClass}
+            style={{ marginBottom: "var(--widget-gap)" }}
           />
         )}
 
-        {/* Buttons - 50% bigger */}
-        <div className="flex justify-end gap-4 mt-6">
+        {/* Buttons */}
+        <div className="flex justify-end" style={{ gap: "var(--spacing-md)", marginTop: "var(--widget-gap)" }}>
           <button
             onClick={onCancel}
             className="px-8 py-4 text-base rounded-xl bg-gray-100 text-gray-500 font-semibold hover:bg-gray-200 transition-colors"

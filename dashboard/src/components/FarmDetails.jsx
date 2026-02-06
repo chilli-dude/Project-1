@@ -9,7 +9,7 @@ function Field({ label, value, onChange, type = "text", placeholder = "", option
 
   return (
     <div>
-      <label className="block text-lg font-semibold text-gray-500 mb-3">{label}</label>
+      <label className="block text-lg font-semibold text-gray-500" style={{ marginBottom: "var(--spacing-sm)" }}>{label}</label>
       {options ? (
         <select value={value} onChange={onChange} className={base}>
           {options.map((o) => (
@@ -37,10 +37,10 @@ export default function FarmDetails({ farm, onUpdateDetails }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="widget-stack">
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Project Information</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <h3 className="widget-heading text-xl">Project Information</h3>
+        <div className="widget-grid grid-cols-1 sm:grid-cols-2">
           <Field label="Project Type" value={d.projectType} onChange={update("projectType")} options={PROJECT_TYPES} />
           <Field label="Project Length" value={d.projectLength} onChange={update("projectLength")} placeholder="e.g. 5 years" />
           <Field label="Year Start" value={d.yearStart} onChange={update("yearStart")} type="number" placeholder="e.g. 2024" />
@@ -50,8 +50,8 @@ export default function FarmDetails({ farm, onUpdateDetails }) {
       </div>
 
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Contact Details</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <h3 className="widget-heading text-xl">Contact Details</h3>
+        <div className="widget-grid grid-cols-1 sm:grid-cols-2">
           <Field label="Contact Name" value={d.contactName} onChange={update("contactName")} placeholder="e.g. John Smith" />
           <Field label="Email" value={d.contactEmail} onChange={update("contactEmail")} type="email" placeholder="e.g. john@farm.com" />
           <Field label="Phone" value={d.contactPhone} onChange={update("contactPhone")} type="tel" placeholder="e.g. +44 7700 000000" />

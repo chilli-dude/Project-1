@@ -1,5 +1,39 @@
 @import "tailwindcss";
 
+/* ===== Design Tokens ===== */
+:root {
+  /* Spacing scale */
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Widget tokens */
+  --widget-padding: 20px;
+  --widget-gap: 20px;
+  --widget-radius: 16px;
+
+  /* Sidebar */
+  --sidebar-padding: 20px;
+
+  /* Colors */
+  --color-bg: #f1f0f9;
+  --color-surface: #ffffff;
+  --color-text: #1e1b3a;
+  --color-text-muted: #9ca3af;
+  --color-text-faint: #d1d5db;
+  --color-border: #e5e7eb;
+  --color-border-light: #f3f4f6;
+  --color-primary: #7c3aed;
+  --color-primary-light: #ede9fe;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -8,8 +42,8 @@
 
 body {
   font-family: "Inter", system-ui, -apple-system, sans-serif;
-  background-color: #f1f0f9;
-  color: #1e1b3a;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   min-height: 100vh;
 }
 
@@ -17,10 +51,48 @@ body {
   min-height: 100vh;
 }
 
-/* Leaflet overrides */
+/* ===== Reusable Widget Classes ===== */
+
+/* Standard widget card - white box with padding, radius, shadow */
+.widget-card {
+  background-color: var(--color-surface);
+  border-radius: var(--widget-radius);
+  padding: var(--widget-padding);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Grid with standard widget gap */
+.widget-grid {
+  display: grid;
+  gap: var(--widget-gap);
+}
+
+/* Flex column with standard widget gap */
+.widget-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--widget-gap);
+}
+
+/* Dashboard main content area */
+.dashboard-container {
+  padding: var(--widget-gap);
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Section heading inside a widget */
+.widget-heading {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+/* ===== Leaflet overrides ===== */
 .leaflet-container {
   background: #e8e7f0;
-  border-radius: 1rem;
+  border-radius: var(--widget-radius);
 }
 
 .leaflet-control-zoom a {
@@ -30,7 +102,7 @@ body {
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #f1f0f9 !important;
+  background-color: var(--color-bg) !important;
 }
 
 /* Draw toolbar styling */
@@ -53,7 +125,7 @@ body {
   border-radius: 0 4px 4px 0;
 }
 
-/* Custom scrollbar */
+/* ===== Custom scrollbar ===== */
 ::-webkit-scrollbar {
   width: 5px;
 }

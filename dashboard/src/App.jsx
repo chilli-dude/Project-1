@@ -36,9 +36,9 @@ function SummaryCards({ farms, selectedFarm }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+    <div className="widget-grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4" style={{ marginBottom: "var(--widget-gap)" }}>
       {cards.map((card) => (
-        <div key={card.label} className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm">
+        <div key={card.label} className="widget-card flex items-center" style={{ gap: "var(--spacing-md)" }}>
           <div className={`w-14 h-14 rounded-xl ${card.bg} flex items-center justify-center`}>
             <svg className={`w-7 h-7 ${card.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               <path strokeLinecap="round" strokeLinejoin="round" d={card.icon} />
@@ -59,22 +59,22 @@ function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetr
   const selectedFarm = farms.find((f) => f.id === selectedFarmId) || null;
 
   return (
-    <>
+    <div className="widget-stack">
       <SummaryCards farms={farms} selectedFarm={selectedFarm} />
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
-        <div className="lg:col-span-5 bg-white rounded-2xl shadow-sm overflow-hidden min-h-[450px]">
+      <div className="widget-grid grid-cols-1 lg:grid-cols-12 min-h-0">
+        <div className="lg:col-span-5 widget-card !p-0 overflow-hidden min-h-[450px]">
           <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={toggleFarmSelection} />
         </div>
-        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm p-4 overflow-hidden flex flex-col max-h-[650px]">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Portfolio</h2>
+        <div className="lg:col-span-3 widget-card overflow-hidden flex flex-col max-h-[650px]">
+          <h2 className="widget-heading">Portfolio</h2>
           <div className="flex-1 overflow-y-auto min-h-0">
             <PortfolioPanel farms={farms} selectedFarmId={selectedFarmId} onSelectFarm={toggleFarmSelection} onDeleteFarm={handleDeleteFarm} />
           </div>
         </div>
-        <div className="lg:col-span-4 bg-white rounded-2xl shadow-sm p-4 overflow-hidden flex flex-col max-h-[650px]">
+        <div className="lg:col-span-4 widget-card overflow-hidden flex flex-col max-h-[650px]">
           {selectedFarm ? (
             <>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between" style={{ marginBottom: "var(--spacing-md)" }}>
                 <h2 className="text-xl font-bold text-gray-900">{selectedFarm.name}</h2>
                 <span className="text-base font-medium px-3 py-1 rounded-full bg-violet-100 text-violet-600">{selectedFarm.group}</span>
               </div>
@@ -83,7 +83,7 @@ function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetr
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-gray-300 p-4">
+            <div className="flex-1 flex flex-col items-center justify-center text-gray-300" style={{ padding: "var(--widget-padding)" }}>
               <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -96,18 +96,16 @@ function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetr
         </div>
       </div>
       {selectedFarm && (
-        <div className="mt-6">
-          <MetricCharts data={selectedFarm.metricsData} selectedMetric={selectedMetric} />
-        </div>
+        <MetricCharts data={selectedFarm.metricsData} selectedMetric={selectedMetric} />
       )}
-    </>
+    </div>
   );
 }
 
 // ---- Map page ----
 function MapPage({ farms, selectedFarmId, toggleFarmSelection, handlePolygonDrawn }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm overflow-hidden" style={{ height: "calc(100vh - 140px)" }}>
+    <div className="widget-card !p-0 overflow-hidden" style={{ height: "calc(100vh - 140px)" }}>
       <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={toggleFarmSelection} />
     </div>
   );
@@ -118,9 +116,9 @@ function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDelet
   const selectedFarm = farms.find((f) => f.id === selectedFarmId) || null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-4">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">All Farms</h2>
+    <div className="widget-grid grid-cols-1 lg:grid-cols-3">
+      <div className="lg:col-span-1 widget-card">
+        <h2 className="text-xl font-bold text-gray-900" style={{ marginBottom: "var(--widget-gap)" }}>All Farms</h2>
         <PortfolioPanel
           farms={farms}
           selectedFarmId={selectedFarmId}
@@ -128,19 +126,19 @@ function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDelet
           onDeleteFarm={handleDeleteFarm}
         />
       </div>
-      <div className="lg:col-span-2">
+      <div className="lg:col-span-2 widget-stack">
         <SummaryCards farms={farms} selectedFarm={selectedFarm} />
         {selectedFarm ? (
-          <div className="bg-white rounded-2xl shadow-sm p-4 mt-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{selectedFarm.name} - Metrics</h2>
+          <div className="widget-card">
+            <h2 className="widget-heading">{selectedFarm.name} - Metrics</h2>
             <MetricsPanel data={selectedFarm.metricsData} selectedMetric={selectedMetric} onSelectMetric={setSelectedMetric} />
-            <div className="mt-6">
+            <div style={{ marginTop: "var(--widget-gap)" }}>
               <MetricCharts data={selectedFarm.metricsData} selectedMetric={selectedMetric} />
             </div>
           </div>
         ) : farms.length > 0 ? (
-          <div className="bg-white rounded-2xl shadow-sm p-4 mt-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Portfolio Risk Analysis</h2>
+          <div className="widget-card">
+            <h2 className="text-xl font-bold text-gray-900" style={{ marginBottom: "var(--widget-gap)" }}>Portfolio Risk Analysis</h2>
             <MetricCharts data={farms[0].metricsData} selectedMetric="soil_moisture" />
           </div>
         ) : null}
@@ -171,8 +169,8 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
   ];
 
   return (
-    <div>
-      <div className="bg-white rounded-2xl shadow-sm p-4 mb-6">
+    <div className="widget-stack">
+      <div className="widget-card">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">{farm.name}</h2>
@@ -195,7 +193,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
         </div>
       </div>
 
-      <div className="flex gap-6 mb-6">
+      <div className="flex" style={{ gap: "var(--widget-gap)" }}>
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -212,7 +210,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
       </div>
 
       {tab === "metrics" && (
-        <div className="bg-white rounded-2xl shadow-sm p-4">
+        <div className="widget-card">
           <MetricsPanel data={farm.metricsData} selectedMetric={selectedMetric} onSelectMetric={setSelectedMetric} />
         </div>
       )}
@@ -220,7 +218,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
         <MetricCharts data={farm.metricsData} selectedMetric={selectedMetric} />
       )}
       {tab === "details" && (
-        <div className="bg-white rounded-2xl shadow-sm p-4">
+        <div className="widget-card">
           <FarmDetails farm={farm} onUpdateDetails={onUpdateDetails} />
         </div>
       )}
@@ -280,21 +278,21 @@ export default function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f1f0f9] flex">
+    <div className="min-h-screen flex" style={{ backgroundColor: "var(--color-bg)" }}>
       {pendingCoords && (
         <AddFarmModal onConfirm={handleAddFarm} onCancel={handleCancelAdd} existingGroups={existingGroups} />
       )}
 
       {/* Sidebar */}
       <aside className="w-72 bg-white flex flex-col flex-shrink-0 border-r border-gray-100 min-h-screen">
-        <div className="p-6 flex items-center gap-3">
+        <div className="flex items-center gap-3" style={{ padding: "var(--sidebar-padding)" }}>
           <div className="w-11 h-11 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-xl font-extrabold text-white">
             F
           </div>
           <span className="text-xl font-bold text-gray-900 tracking-tight">FarmRisk</span>
         </div>
 
-        <div className="px-6 mb-6">
+        <div style={{ padding: "0 var(--sidebar-padding)", marginBottom: "var(--sidebar-padding)" }}>
           <button
             onClick={() => setActiveNav("map")}
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-base font-bold rounded-xl px-6 py-4 shadow-md shadow-violet-200 hover:shadow-lg hover:shadow-violet-300 transition-all"
@@ -306,7 +304,7 @@ export default function App() {
           </button>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 space-y-2" style={{ padding: "0 var(--spacing-md)" }}>
           {NAV_ITEMS.map((item) => {
             const isActive = activeNav === item.id;
             if (item.id === "farm" && !selectedFarm) return null;
@@ -329,8 +327,8 @@ export default function App() {
           })}
         </nav>
 
-        <div className="px-6 pb-6">
-          <div className="bg-violet-50 rounded-2xl p-4 text-center">
+        <div style={{ padding: "0 var(--sidebar-padding) var(--sidebar-padding)" }}>
+          <div className="bg-violet-50 rounded-2xl text-center" style={{ padding: "var(--spacing-sm)" }}>
             <p className="text-base font-semibold text-violet-700 mb-1">
               {farms.length} farm{farms.length !== 1 ? "s" : ""} tracked
             </p>
@@ -344,7 +342,7 @@ export default function App() {
       {/* Main area */}
       <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
         <header className="bg-white/70 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
-          <div className="px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center justify-between" style={{ padding: "var(--spacing-md) var(--widget-gap)" }}>
             <h2 className="text-xl font-bold text-gray-900 capitalize">{activeNav === "farm" && selectedFarm ? selectedFarm.name : activeNav}</h2>
             <div className="flex items-center gap-4">
               {farms.length > 0 && (
@@ -359,7 +357,7 @@ export default function App() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="dashboard-container">
           {activeNav === "overview" && (
             <OverviewPage
               farms={farms}

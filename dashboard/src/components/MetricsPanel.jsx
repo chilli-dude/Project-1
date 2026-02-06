@@ -11,7 +11,7 @@ const riskLabels = { low: "Low", moderate: "Med", high: "High" };
 export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
   if (!data) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-300 p-4">
+      <div className="flex flex-col items-center justify-center h-full text-gray-300" style={{ padding: "var(--widget-padding)" }}>
         <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
         </svg>
@@ -21,8 +21,8 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
   }
 
   return (
-    <div className="space-y-2">
-      <div className="mb-3 text-sm text-gray-400 font-medium">
+    <div className="flex flex-col" style={{ gap: "var(--spacing-xs)" }}>
+      <div className="text-sm text-gray-400 font-medium" style={{ marginBottom: "var(--spacing-sm)" }}>
         Centroid: {data.centroid.lat}, {data.centroid.lng} &middot; ~{data.area} km²
         {data.realDataLoaded && (
           <span className="ml-2 text-emerald-500 font-semibold">LIVE DATA</span>
@@ -39,11 +39,12 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
           <button
             key={metric.id}
             onClick={() => onSelectMetric(metric.id)}
-            className={`w-full text-left p-4 rounded-xl border transition-all duration-150
+            className={`w-full text-left rounded-xl border transition-all duration-150
               ${isSelected
                 ? "bg-violet-50 border-violet-200 shadow-sm"
                 : "bg-gray-50/50 border-transparent hover:bg-gray-50 hover:border-gray-100"
               }`}
+            style={{ padding: "var(--spacing-sm) var(--spacing-md)" }}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
