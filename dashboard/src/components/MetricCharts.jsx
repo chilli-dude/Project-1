@@ -103,7 +103,7 @@ function ComparisonBarChart({ data }) {
     const value = data.current[metric.id];
     const [min, max] = metric.range;
     const normalized = ((value - min) / (max - min)) * 100;
-    return { name: metric.icon, value: +normalized.toFixed(1), fill: metric.color };
+    return { name: metric.name.length > 8 ? metric.name.slice(0, 8) + ".." : metric.name, value: +normalized.toFixed(1), fill: metric.color };
   });
 
   return (
@@ -112,7 +112,7 @@ function ComparisonBarChart({ data }) {
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={barData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f5" vertical={false} />
-          <XAxis dataKey="name" tick={{ fontSize: 19 }} axisLine={false} tickLine={false} />
+          <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} interval={0} angle={-30} textAnchor="end" height={50} />
           <YAxis domain={[0, 100]} tick={{ fill: "#9ca3af", fontSize: 14 }} axisLine={false} tickLine={false} width={45} />
           <Tooltip
             contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "12px", fontSize: "16px", color: "#1f2937", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}

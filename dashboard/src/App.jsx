@@ -114,7 +114,7 @@ function MapPage({ farms, selectedFarmId, toggleFarmSelection, handlePolygonDraw
 }
 
 // ---- Portfolio page ----
-function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDeleteFarm, setActiveNav }) {
+function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDeleteFarm, selectedMetric, setSelectedMetric }) {
   const selectedFarm = farms.find((f) => f.id === selectedFarmId) || null;
 
   return (
@@ -124,22 +124,26 @@ function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDelet
         <PortfolioPanel
           farms={farms}
           selectedFarmId={selectedFarmId}
-          onSelectFarm={(id) => {
-            const willSelect = id !== selectedFarmId;
-            toggleFarmSelection(id);
-            if (willSelect) setActiveNav("farm");
-          }}
+          onSelectFarm={toggleFarmSelection}
           onDeleteFarm={handleDeleteFarm}
         />
       </div>
       <div className="lg:col-span-2">
         <SummaryCards farms={farms} selectedFarm={selectedFarm} />
-        {farms.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-[12px]">
+        {selectedFarm ? (
+          <div className="bg-white rounded-2xl shadow-sm p-[12px] mt-[30px]">
+            <h2 className="text-xl font-bold text-gray-900 mb-[12px]">{selectedFarm.name} - Metrics</h2>
+            <MetricsPanel data={selectedFarm.metricsData} selectedMetric={selectedMetric} onSelectMetric={setSelectedMetric} />
+            <div className="mt-[30px]">
+              <MetricCharts data={selectedFarm.metricsData} selectedMetric={selectedMetric} />
+            </div>
+          </div>
+        ) : farms.length > 0 ? (
+          <div className="bg-white rounded-2xl shadow-sm p-[12px] mt-[30px]">
             <h2 className="text-xl font-bold text-gray-900 mb-[30px]">Portfolio Risk Analysis</h2>
             <MetricCharts data={farms[0].metricsData} selectedMetric="soil_moisture" />
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -381,7 +385,8 @@ export default function App() {
               selectedFarmId={selectedFarmId}
               toggleFarmSelection={toggleFarmSelection}
               handleDeleteFarm={handleDeleteFarm}
-              setActiveNav={setActiveNav}
+              selectedMetric={selectedMetric}
+              setSelectedMetric={setSelectedMetric}
             />
           )}
           {activeNav === "farm" && (

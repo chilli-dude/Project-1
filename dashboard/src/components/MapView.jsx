@@ -76,6 +76,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
     return () => {
       map.remove();
       mapInstanceRef.current = null;
+      farmLayersRef.current = new Map();
     };
   }, []);
 
@@ -157,22 +158,18 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       layerGroup.addTo(map);
       farmLayersRef.current.set(farm.id, layerGroup);
     });
-  }, [farms, selectedFarmId]);
 
-  // Auto-fit bounds when farms are added
-  useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map || farms.length === 0) return;
-
-    const bounds = L.latLngBounds([]);
-    farms.forEach((farm) => {
-      farm.coords.forEach((c) => bounds.extend([c.lat, c.lng]));
-    });
-
-    if (bounds.isValid()) {
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    // Fit bounds whenever farms are rendered (including on remount)
+    if (farms.length > 0) {
+      const bounds = L.latLngBounds([]);
+      farms.forEach((farm) => {
+        farm.coords.forEach((c) => bounds.extend([c.lat, c.lng]));
+      });
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      }
     }
-  }, [farms.length]);
+  }, [farms, selectedFarmId]);
 
   return (
     <div className="relative h-full w-full">

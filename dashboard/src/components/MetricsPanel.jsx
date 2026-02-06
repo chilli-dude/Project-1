@@ -46,8 +46,8 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
               }`}
           >
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <span className="text-lg">{metric.icon}</span>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: metric.color }} />
                 <div>
                   <span className={`text-base font-semibold ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
                     {metric.name}
