@@ -12,6 +12,11 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
   const mapInstanceRef = useRef(null);
   const drawnItemsRef = useRef(null);
   const farmLayersRef = useRef(new Map());
+  const onFarmSelectRef = useRef(onFarmSelect);
+
+  useEffect(() => {
+    onFarmSelectRef.current = onFarmSelect;
+  });
 
   useEffect(() => {
     if (mapInstanceRef.current) return;
@@ -74,6 +79,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
     };
   }, []);
 
+  // Render farm polygons
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -121,7 +127,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
         fillOpacity: isSelected ? 0.3 : 0.15,
       });
 
-      polygon.on("click", () => onFarmSelect(farm.id));
+      polygon.on("click", () => onFarmSelectRef.current(farm.id));
 
       const center = polygon.getBounds().getCenter();
       const label = L.marker(center, {
@@ -131,9 +137,9 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
             background: rgba(255,255,255,0.92);
             backdrop-filter: blur(4px);
             color: #1e1b3a;
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 700;
-            padding: 3px 10px;
+            padding: 4px 12px;
             border-radius: 8px;
             border: 2px solid ${color};
             white-space: nowrap;
@@ -153,10 +159,25 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
     });
   }, [farms, selectedFarmId]);
 
+  // Auto-fit bounds when farms are added
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || farms.length === 0) return;
+
+    const bounds = L.latLngBounds([]);
+    farms.forEach((farm) => {
+      farm.coords.forEach((c) => bounds.extend([c.lat, c.lng]));
+    });
+
+    if (bounds.isValid()) {
+      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+    }
+  }, [farms.length]);
+
   return (
     <div className="relative h-full w-full">
       <div ref={mapRef} className="h-full w-full rounded-2xl" />
-      <div className="absolute top-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-gray-500 font-medium shadow-sm border border-gray-200">
+      <div className="absolute top-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 text-base text-gray-500 font-medium shadow-sm border border-gray-200">
         Draw polygons to add farm sites
       </div>
     </div>

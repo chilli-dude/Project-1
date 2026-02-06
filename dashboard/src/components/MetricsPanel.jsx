@@ -11,18 +11,18 @@ const riskLabels = { low: "Low", moderate: "Med", high: "High" };
 export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
   if (!data) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-300 px-6 py-14">
-        <svg className="w-14 h-14 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
+      <div className="flex flex-col items-center justify-center h-full text-gray-300 p-[12px]">
+        <svg className="w-16 h-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
         </svg>
-        <p className="text-base text-center font-medium text-gray-400">Draw a polygon on the map to view metrics</p>
+        <p className="text-lg text-center font-medium text-gray-400">Draw a polygon on the map to view metrics</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-2">
-      <div className="mb-3 text-xs text-gray-400 font-medium px-2">
+      <div className="mb-3 text-sm text-gray-400 font-medium">
         Centroid: {data.centroid.lat}, {data.centroid.lng} &middot; ~{data.area} km²
         {data.realDataLoaded && (
           <span className="ml-2 text-emerald-500 font-semibold">LIVE DATA</span>
@@ -39,7 +39,7 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
           <button
             key={metric.id}
             onClick={() => onSelectMetric(metric.id)}
-            className={`w-full text-left px-4 py-3 rounded-xl border transition-all duration-150
+            className={`w-full text-left px-[12px] py-[12px] rounded-xl border transition-all duration-150
               ${isSelected
                 ? "bg-violet-50 border-violet-200 shadow-sm"
                 : "bg-gray-50/50 border-transparent hover:bg-gray-50 hover:border-gray-100"
@@ -47,22 +47,22 @@ export default function MetricsPanel({ data, selectedMetric, onSelectMetric }) {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="text-base">{metric.icon}</span>
+                <span className="text-lg">{metric.icon}</span>
                 <div>
-                  <span className={`text-sm font-semibold ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
+                  <span className={`text-base font-semibold ${isSelected ? "text-violet-700" : "text-gray-700"}`}>
                     {metric.name}
                   </span>
                   {isReal && data.realDataLoaded && (
-                    <span className="ml-2 text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600">LIVE</span>
+                    <span className="ml-2 text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-600">LIVE</span>
                   )}
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
-                <span className="text-base font-bold" style={{ color: metric.color }}>
+                <span className="text-lg font-bold" style={{ color: metric.color }}>
                   {value}
-                  {metric.unit && <span className="text-xs font-normal text-gray-400 ml-0.5">{metric.unit}</span>}
+                  {metric.unit && <span className="text-sm font-normal text-gray-400 ml-0.5">{metric.unit}</span>}
                 </span>
-                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${riskColors[risk]}`}>
+                <span className={`text-sm font-semibold px-2.5 py-1 rounded-full ${riskColors[risk]}`}>
                   {riskLabels[risk]}
                 </span>
               </div>

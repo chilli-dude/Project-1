@@ -5,11 +5,11 @@ const PROJECT_TYPES = [
 
 function Field({ label, value, onChange, type = "text", placeholder = "", options }) {
   const base =
-    "w-full px-4 py-3 rounded-xl bg-[#f1f0f9] border border-gray-200 text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400";
+    "w-full px-8 py-6 rounded-xl bg-[#f1f0f9] border border-gray-200 text-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:border-violet-400";
 
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-500 mb-2">{label}</label>
+      <label className="block text-lg font-semibold text-gray-500 mb-3">{label}</label>
       {options ? (
         <select value={value} onChange={onChange} className={base}>
           {options.map((o) => (
@@ -37,10 +37,10 @@ export default function FarmDetails({ farm, onUpdateDetails }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-[30px]">
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Project Information</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <h3 className="text-xl font-bold text-gray-900 mb-[12px]">Project Information</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[30px]">
           <Field label="Project Type" value={d.projectType} onChange={update("projectType")} options={PROJECT_TYPES} />
           <Field label="Project Length" value={d.projectLength} onChange={update("projectLength")} placeholder="e.g. 5 years" />
           <Field label="Year Start" value={d.yearStart} onChange={update("yearStart")} type="number" placeholder="e.g. 2024" />
@@ -50,8 +50,8 @@ export default function FarmDetails({ farm, onUpdateDetails }) {
       </div>
 
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Contact Details</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <h3 className="text-xl font-bold text-gray-900 mb-[12px]">Contact Details</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-[30px]">
           <Field label="Contact Name" value={d.contactName} onChange={update("contactName")} placeholder="e.g. John Smith" />
           <Field label="Email" value={d.contactEmail} onChange={update("contactEmail")} type="email" placeholder="e.g. john@farm.com" />
           <Field label="Phone" value={d.contactPhone} onChange={update("contactPhone")} type="tel" placeholder="e.g. +44 7700 000000" />
