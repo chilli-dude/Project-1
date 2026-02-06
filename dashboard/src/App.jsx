@@ -5,12 +5,14 @@ import MetricCharts from "./components/MetricCharts";
 import PortfolioPanel from "./components/PortfolioPanel";
 import AddFarmModal from "./components/AddFarmModal";
 import FarmDetails from "./components/FarmDetails";
+import RecommendationsPanel from "./components/RecommendationsPanel";
 import { createFarm, enrichFarmWithRealData, computeAggregateRisk, computeFarmRisk, METRICS, getRiskLevel } from "./data/metrics";
 
 const NAV_ITEMS = [
   { id: "overview", label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" },
   { id: "map", label: "Map", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" },
   { id: "portfolio", label: "Portfolio", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0l-3-3m-7 3H3m2 0l3-3" },
+  { id: "recommendations", label: "Recommendations", icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" },
   { id: "farm", label: "Farm Detail", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
 ];
 
@@ -343,7 +345,7 @@ export default function App() {
       <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
         <header className="bg-white/70 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
           <div className="flex items-center justify-between" style={{ padding: "var(--spacing-md) var(--widget-gap)" }}>
-            <h2 className="text-xl font-bold text-gray-900 capitalize">{activeNav === "farm" && selectedFarm ? selectedFarm.name : activeNav}</h2>
+            <h2 className="text-xl font-bold text-gray-900 capitalize">{activeNav === "farm" && selectedFarm ? selectedFarm.name : NAV_ITEMS.find(n => n.id === activeNav)?.label || activeNav}</h2>
             <div className="flex items-center gap-4">
               {farms.length > 0 && (
                 <span className="text-base font-medium px-5 py-2 rounded-full bg-violet-100 text-violet-600">
@@ -385,6 +387,12 @@ export default function App() {
               handleDeleteFarm={handleDeleteFarm}
               selectedMetric={selectedMetric}
               setSelectedMetric={setSelectedMetric}
+            />
+          )}
+          {activeNav === "recommendations" && (
+            <RecommendationsPanel
+              farms={farms}
+              selectedFarmId={selectedFarmId}
             />
           )}
           {activeNav === "farm" && (
