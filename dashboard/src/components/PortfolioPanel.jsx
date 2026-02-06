@@ -26,7 +26,7 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
 
   if (farms.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-300 p-[12px]">
+      <div className="flex flex-col items-center justify-center h-full text-gray-300 p-4">
         <svg className="w-14 h-14 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0l-3-3m-7 3H3m2 0l3-3" />
         </svg>
@@ -53,9 +53,9 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
   };
 
   return (
-    <div className="space-y-[30px]">
+    <div className="space-y-6">
       {/* Portfolio summary */}
-      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl p-[12px] text-white">
+      <div className="bg-gradient-to-r from-violet-500 to-purple-600 rounded-2xl p-4 text-white">
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold uppercase tracking-wider opacity-80">Portfolio Risk</span>
           <span className="text-sm font-bold px-3 py-1 rounded-full bg-white/20">
@@ -105,7 +105,7 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
                     <button
                       key={farm.id}
                       onClick={() => onSelectFarm(farm.id)}
-                      className={`w-full text-left px-[12px] py-[12px] rounded-xl border transition-all duration-150 group relative
+                      className={`w-full text-left p-4 rounded-xl border transition-all duration-150 group relative
                         ${isSelected
                           ? "bg-violet-50 border-violet-200 shadow-sm"
                           : "bg-gray-50/60 border-transparent hover:bg-gray-50 hover:border-gray-100"

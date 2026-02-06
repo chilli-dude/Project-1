@@ -32,8 +32,8 @@ function CustomTooltip({ active, payload, label, unit }) {
 
 function TimeSeriesChart({ data, metric }) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-[12px]">
-      <div className="flex items-center justify-between mb-[12px]">
+    <div className="bg-white rounded-2xl shadow-sm p-4">
+      <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-gray-900">
           {metric.name} Trend
         </h3>
@@ -73,8 +73,8 @@ function RiskOverviewChart({ data }) {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-[12px]">
-      <h3 className="text-lg font-bold text-gray-900 mb-[12px]">Risk Overview</h3>
+    <div className="bg-white rounded-2xl shadow-sm p-4">
+      <h3 className="text-lg font-bold text-gray-900 mb-4">Risk Overview</h3>
       <ResponsiveContainer width="100%" height={320}>
         <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="70%">
           <PolarGrid stroke="#e5e7eb" />
@@ -107,8 +107,8 @@ function ComparisonBarChart({ data }) {
   });
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm p-[12px]">
-      <h3 className="text-lg font-bold text-gray-900 mb-[12px]">Metric Comparison</h3>
+    <div className="bg-white rounded-2xl shadow-sm p-4">
+      <h3 className="text-lg font-bold text-gray-900 mb-4">Metric Comparison</h3>
       <ResponsiveContainer width="100%" height={320}>
         <BarChart data={barData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f5" vertical={false} />
@@ -142,9 +142,9 @@ export default function MetricCharts({ data, selectedMetric }) {
   const tsData = data.timeSeries[selectedMetric];
 
   return (
-    <div className="space-y-[30px]">
+    <div className="space-y-6">
       {metric && <TimeSeriesChart data={tsData} metric={metric} />}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-[30px]">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <RiskOverviewChart data={data} />
         <ComparisonBarChart data={data} />
       </div>
