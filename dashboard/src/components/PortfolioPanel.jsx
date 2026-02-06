@@ -21,7 +21,7 @@ function RiskBadge({ risk }) {
   );
 }
 
-export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, onDeleteFarm }) {
+export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, onDeleteFarm, onEditFarm, onArchiveFarm }) {
   const [collapsedGroups, setCollapsedGroups] = useState({});
 
   if (farms.length === 0) {
@@ -127,8 +127,33 @@ export default function PortfolioPanel({ farms, selectedFarmId, onSelectFarm, on
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
                           <RiskBadge risk={farmRisk} />
+                          {/* Edit button */}
+                          {onEditFarm && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onEditFarm(farm); }}
+                              className="opacity-0 group-hover:opacity-100 p-1.5 rounded text-gray-300 hover:text-sky-500 transition-all"
+                              title="Edit farm"
+                            >
+                              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                          )}
+                          {/* Archive button */}
+                          {onArchiveFarm && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onArchiveFarm(farm.id); }}
+                              className="opacity-0 group-hover:opacity-100 p-1.5 rounded text-gray-300 hover:text-amber-500 transition-all"
+                              title="Archive farm"
+                            >
+                              <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                              </svg>
+                            </button>
+                          )}
+                          {/* Delete button */}
                           <button
                             onClick={(e) => { e.stopPropagation(); onDeleteFarm(farm.id); }}
                             className="opacity-0 group-hover:opacity-100 p-1.5 rounded text-gray-300 hover:text-rose-400 transition-all"

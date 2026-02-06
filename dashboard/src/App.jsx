@@ -1,18 +1,43 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import MapView from "./components/MapView";
 import MetricsPanel from "./components/MetricsPanel";
 import MetricCharts from "./components/MetricCharts";
 import PortfolioPanel from "./components/PortfolioPanel";
 import AddFarmModal from "./components/AddFarmModal";
+import EditFarmModal from "./components/EditFarmModal";
 import FarmDetails from "./components/FarmDetails";
 import RecommendationsPanel from "./components/RecommendationsPanel";
-import { createFarm, enrichFarmWithRealData, computeAggregateRisk, computeFarmRisk, METRICS, getRiskLevel } from "./data/metrics";
+import { createFarm, enrichFarmWithRealData, computeAggregateRisk, computeFarmRisk, METRICS, getRiskLevel, setNextId } from "./data/metrics";
+
+const STORAGE_KEY = "farmrisk_farms";
+const THEME_KEY = "farmrisk_theme";
+
+function loadFarms() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed;
+  } catch {
+    return [];
+  }
+}
+
+function saveFarms(farms) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(farms));
+  } catch {
+    // storage full or unavailable
+  }
+}
 
 const NAV_ITEMS = [
   { id: "overview", label: "Overview", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" },
   { id: "map", label: "Map", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" },
   { id: "portfolio", label: "Portfolio", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0H5m14 0h2m-2 0l-3-3m-7 3H3m2 0l3-3" },
   { id: "recommendations", label: "Recommendations", icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" },
+  { id: "archive", label: "Archive", icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" },
   { id: "farm", label: "Farm Detail", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
 ];
 
@@ -57,7 +82,7 @@ function SummaryCards({ farms, selectedFarm }) {
 }
 
 // ---- Overview page ----
-function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetric, setSelectedMetric, handlePolygonDrawn, handleDeleteFarm }) {
+function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetric, setSelectedMetric, handlePolygonDrawn, handleDeleteFarm, hiddenGroups, onEditFarm, onArchiveFarm }) {
   const selectedFarm = farms.find((f) => f.id === selectedFarmId) || null;
 
   return (
@@ -65,12 +90,12 @@ function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetr
       <SummaryCards farms={farms} selectedFarm={selectedFarm} />
       <div className="widget-grid grid-cols-1 lg:grid-cols-12 min-h-0">
         <div className="lg:col-span-5 widget-card !p-0 overflow-hidden min-h-[450px]">
-          <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={toggleFarmSelection} />
+          <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={toggleFarmSelection} hiddenGroups={hiddenGroups} />
         </div>
         <div className="lg:col-span-3 widget-card overflow-hidden flex flex-col max-h-[650px]">
           <h2 className="widget-heading">Portfolio</h2>
           <div className="flex-1 overflow-y-auto min-h-0">
-            <PortfolioPanel farms={farms} selectedFarmId={selectedFarmId} onSelectFarm={toggleFarmSelection} onDeleteFarm={handleDeleteFarm} />
+            <PortfolioPanel farms={farms} selectedFarmId={selectedFarmId} onSelectFarm={toggleFarmSelection} onDeleteFarm={handleDeleteFarm} onEditFarm={onEditFarm} onArchiveFarm={onArchiveFarm} />
           </div>
         </div>
         <div className="lg:col-span-4 widget-card overflow-hidden flex flex-col max-h-[650px]">
@@ -105,16 +130,16 @@ function OverviewPage({ farms, selectedFarmId, toggleFarmSelection, selectedMetr
 }
 
 // ---- Map page ----
-function MapPage({ farms, selectedFarmId, toggleFarmSelection, handlePolygonDrawn }) {
+function MapPage({ farms, selectedFarmId, toggleFarmSelection, handlePolygonDrawn, hiddenGroups }) {
   return (
     <div className="widget-card !p-0 overflow-hidden" style={{ height: "calc(100vh - 140px)" }}>
-      <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={toggleFarmSelection} />
+      <MapView farms={farms} selectedFarmId={selectedFarmId} onPolygonDrawn={handlePolygonDrawn} onFarmSelect={toggleFarmSelection} hiddenGroups={hiddenGroups} />
     </div>
   );
 }
 
 // ---- Portfolio page ----
-function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDeleteFarm, selectedMetric, setSelectedMetric }) {
+function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDeleteFarm, selectedMetric, setSelectedMetric, onEditFarm, onArchiveFarm }) {
   const selectedFarm = farms.find((f) => f.id === selectedFarmId) || null;
 
   return (
@@ -126,6 +151,8 @@ function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDelet
           selectedFarmId={selectedFarmId}
           onSelectFarm={toggleFarmSelection}
           onDeleteFarm={handleDeleteFarm}
+          onEditFarm={onEditFarm}
+          onArchiveFarm={onArchiveFarm}
         />
       </div>
       <div className="lg:col-span-2 widget-stack">
@@ -144,6 +171,70 @@ function PortfolioPage({ farms, selectedFarmId, toggleFarmSelection, handleDelet
             <MetricCharts data={farms[0].metricsData} selectedMetric="soil_moisture" />
           </div>
         ) : null}
+      </div>
+    </div>
+  );
+}
+
+// ---- Archive page ----
+function ArchivePage({ archivedFarms, onUnarchive, onDeleteFarm }) {
+  if (archivedFarms.length === 0) {
+    return (
+      <div className="widget-card flex flex-col items-center justify-center" style={{ padding: "var(--spacing-xl) var(--widget-padding)" }}>
+        <svg className="w-16 h-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={0.8}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+        </svg>
+        <p className="text-lg font-semibold text-gray-400">No archived farms</p>
+        <p className="text-sm text-gray-400 mt-1 text-center">Archived farms will appear here. Hover over a farm in the portfolio and click the archive icon.</p>
+      </div>
+    );
+  }
+
+  const groups = {};
+  archivedFarms.forEach((farm) => {
+    if (!groups[farm.group]) groups[farm.group] = [];
+    groups[farm.group].push(farm);
+  });
+
+  return (
+    <div className="widget-stack">
+      <div className="widget-card">
+        <h2 className="widget-heading">Archived Farms ({archivedFarms.length})</h2>
+        <p className="text-sm text-gray-400" style={{ marginBottom: "var(--widget-gap)" }}>These farms are hidden from the main portfolio and map. Restore them to bring them back.</p>
+
+        {Object.entries(groups).map(([groupName, groupFarms]) => (
+          <div key={groupName} style={{ marginBottom: "var(--widget-gap)" }}>
+            <h3 className="text-base font-bold text-gray-600 mb-2">{groupName}</h3>
+            <div className="flex flex-col" style={{ gap: "var(--spacing-xs)" }}>
+              {groupFarms.map((farm) => (
+                <div
+                  key={farm.id}
+                  className="flex items-center justify-between rounded-xl bg-gray-50 border border-gray-100"
+                  style={{ padding: "var(--spacing-sm) var(--spacing-md)" }}
+                >
+                  <div>
+                    <span className="text-base font-semibold text-gray-600">{farm.name}</span>
+                    <span className="text-sm text-gray-400 ml-2">~{farm.metricsData.area} km²</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onUnarchive(farm.id)}
+                      className="text-sm font-semibold px-4 py-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors"
+                    >
+                      Restore
+                    </button>
+                    <button
+                      onClick={() => onDeleteFarm(farm.id)}
+                      className="text-sm font-semibold px-4 py-2 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -200,7 +291,7 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-8 py-4 rounded-xl text-base font-semibold transition-all ${
+            className={`px-7 py-4 rounded-xl text-base font-semibold transition-all ${
               tab === t.id
                 ? "bg-red-100 text-red-700"
                 : "bg-white text-gray-400 hover:bg-gray-50 shadow-sm"
@@ -230,13 +321,64 @@ function FarmPage({ farm, selectedMetric, setSelectedMetric, onUpdateDetails }) 
 
 // ---- Main App ----
 export default function App() {
-  const [farms, setFarms] = useState([]);
+  const [farms, setFarms] = useState(() => {
+    const loaded = loadFarms();
+    if (loaded.length > 0) {
+      const maxId = Math.max(...loaded.map((f) => f.id));
+      setNextId(maxId + 1);
+    }
+    return loaded;
+  });
   const [selectedFarmId, setSelectedFarmId] = useState(null);
   const [selectedMetric, setSelectedMetric] = useState("soil_moisture");
   const [pendingCoords, setPendingCoords] = useState(null);
   const [activeNav, setActiveNav] = useState("overview");
+  const [editingFarm, setEditingFarm] = useState(null);
+  const [hiddenGroups, setHiddenGroups] = useState(new Set());
+  const [darkMode, setDarkMode] = useState(() => {
+    try { return localStorage.getItem(THEME_KEY) === "dark"; } catch { return false; }
+  });
 
-  const existingGroups = [...new Set(farms.map((f) => f.group))];
+  // Persist farms to localStorage
+  useEffect(() => {
+    saveFarms(farms);
+  }, [farms]);
+
+  // Apply dark mode theme
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
+    try { localStorage.setItem(THEME_KEY, darkMode ? "dark" : "light"); } catch {}
+  }, [darkMode]);
+
+  // Re-enrich farms that haven't loaded real data yet (after loading from localStorage)
+  useEffect(() => {
+    farms.forEach((farm) => {
+      if (!farm.metricsData.realDataLoaded) {
+        enrichFarmWithRealData(farm).then((enriched) => {
+          setFarms((prev) => prev.map((f) => (f.id === enriched.id ? enriched : f)));
+        });
+      }
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Listen for group toggle events from MapView
+  useEffect(() => {
+    const handler = (e) => {
+      const group = e.detail;
+      setHiddenGroups((prev) => {
+        const next = new Set(prev);
+        if (next.has(group)) next.delete(group);
+        else next.add(group);
+        return next;
+      });
+    };
+    window.addEventListener("toggle-group", handler);
+    return () => window.removeEventListener("toggle-group", handler);
+  }, []);
+
+  const activeFarms = farms.filter((f) => !f.archived);
+  const archivedFarms = farms.filter((f) => f.archived);
+  const existingGroups = [...new Set(activeFarms.map((f) => f.group))];
 
   const handlePolygonDrawn = useCallback((coords) => {
     setPendingCoords(coords);
@@ -269,20 +411,53 @@ export default function App() {
     [selectedFarmId]
   );
 
+  const handleArchiveFarm = useCallback(
+    (id) => {
+      setFarms((prev) => prev.map((f) => (f.id === id ? { ...f, archived: true } : f)));
+      if (selectedFarmId === id) setSelectedFarmId(null);
+    },
+    [selectedFarmId]
+  );
+
+  const handleUnarchiveFarm = useCallback((id) => {
+    setFarms((prev) => prev.map((f) => (f.id === id ? { ...f, archived: false } : f)));
+  }, []);
+
+  const handleEditFarm = useCallback((farm) => {
+    setEditingFarm(farm);
+  }, []);
+
+  const handleEditConfirm = useCallback((id, name, group) => {
+    setFarms((prev) => prev.map((f) => (f.id === id ? { ...f, name, group } : f)));
+    setEditingFarm(null);
+  }, []);
+
   const handleUpdateDetails = useCallback((farmId, details) => {
     setFarms((prev) => prev.map((f) => (f.id === farmId ? { ...f, details } : f)));
   }, []);
 
-  const selectedFarm = farms.find((f) => f.id === selectedFarmId) || null;
+  const selectedFarm = activeFarms.find((f) => f.id === selectedFarmId) || null;
 
   const toggleFarmSelection = useCallback((id) => {
     setSelectedFarmId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const toggleGroupVisibility = useCallback((group) => {
+    setHiddenGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(group)) next.delete(group);
+      else next.add(group);
+      return next;
+    });
   }, []);
 
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: "var(--color-bg)" }}>
       {pendingCoords && (
         <AddFarmModal onConfirm={handleAddFarm} onCancel={handleCancelAdd} existingGroups={existingGroups} />
+      )}
+      {editingFarm && (
+        <EditFarmModal farm={editingFarm} onConfirm={handleEditConfirm} onCancel={() => setEditingFarm(null)} existingGroups={existingGroups} />
       )}
 
       {/* Sidebar */}
@@ -327,15 +502,37 @@ export default function App() {
                   <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                 </svg>
                 {item.label}
+                {item.id === "archive" && archivedFarms.length > 0 && (
+                  <span className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-500">{archivedFarms.length}</span>
+                )}
               </button>
             );
           })}
         </nav>
 
+        {/* Dark mode toggle */}
+        <div style={{ padding: "0 var(--sidebar-padding)" }}>
+          <button
+            onClick={() => setDarkMode((d) => !d)}
+            className="w-full flex items-center gap-3 px-6 py-4 rounded-xl text-base font-semibold text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all"
+          >
+            {darkMode ? (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+            {darkMode ? "Light Mode" : "Night Mode"}
+          </button>
+        </div>
+
         <div style={{ padding: "0 var(--sidebar-padding) var(--sidebar-padding)" }}>
           <div className="bg-red-50 rounded-2xl text-center" style={{ padding: "var(--spacing-sm)" }}>
             <p className="text-base font-semibold text-red-700 mb-1">
-              {farms.length} farm{farms.length !== 1 ? "s" : ""} tracked
+              {activeFarms.length} farm{activeFarms.length !== 1 ? "s" : ""} tracked
             </p>
             <p className="text-sm text-red-400">
               {existingGroups.length} group{existingGroups.length !== 1 ? "s" : ""}
@@ -350,9 +547,9 @@ export default function App() {
           <div className="flex items-center justify-between" style={{ padding: "var(--spacing-md) var(--widget-gap)" }}>
             <h2 className="text-xl font-bold text-gray-900 capitalize">{activeNav === "farm" && selectedFarm ? selectedFarm.name : NAV_ITEMS.find(n => n.id === activeNav)?.label || activeNav}</h2>
             <div className="flex items-center gap-4">
-              {farms.length > 0 && (
+              {activeFarms.length > 0 && (
                 <span className="text-base font-medium px-5 py-2 rounded-full bg-red-100 text-red-600">
-                  {farms.length} farm{farms.length !== 1 ? "s" : ""} in portfolio
+                  {activeFarms.length} farm{activeFarms.length !== 1 ? "s" : ""} in portfolio
                 </span>
               )}
               <div className="w-11 h-11 rounded-full bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center text-base font-bold text-white">
@@ -365,37 +562,50 @@ export default function App() {
         <main className="dashboard-container">
           {activeNav === "overview" && (
             <OverviewPage
-              farms={farms}
+              farms={activeFarms}
               selectedFarmId={selectedFarmId}
               toggleFarmSelection={toggleFarmSelection}
               selectedMetric={selectedMetric}
               setSelectedMetric={setSelectedMetric}
               handlePolygonDrawn={handlePolygonDrawn}
               handleDeleteFarm={handleDeleteFarm}
+              hiddenGroups={hiddenGroups}
+              onEditFarm={handleEditFarm}
+              onArchiveFarm={handleArchiveFarm}
             />
           )}
           {activeNav === "map" && (
             <MapPage
-              farms={farms}
+              farms={activeFarms}
               selectedFarmId={selectedFarmId}
               toggleFarmSelection={toggleFarmSelection}
               handlePolygonDrawn={handlePolygonDrawn}
+              hiddenGroups={hiddenGroups}
             />
           )}
           {activeNav === "portfolio" && (
             <PortfolioPage
-              farms={farms}
+              farms={activeFarms}
               selectedFarmId={selectedFarmId}
               toggleFarmSelection={toggleFarmSelection}
               handleDeleteFarm={handleDeleteFarm}
               selectedMetric={selectedMetric}
               setSelectedMetric={setSelectedMetric}
+              onEditFarm={handleEditFarm}
+              onArchiveFarm={handleArchiveFarm}
             />
           )}
           {activeNav === "recommendations" && (
             <RecommendationsPanel
-              farms={farms}
+              farms={activeFarms}
               selectedFarmId={selectedFarmId}
+            />
+          )}
+          {activeNav === "archive" && (
+            <ArchivePage
+              archivedFarms={archivedFarms}
+              onUnarchive={handleUnarchiveFarm}
+              onDeleteFarm={handleDeleteFarm}
             />
           )}
           {activeNav === "farm" && (

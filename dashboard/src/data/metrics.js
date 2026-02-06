@@ -1,4 +1,6 @@
-import { fetchRealWeatherData, REAL_METRIC_IDS } from "../api/openmeteo";
+import { fetchRealWeatherData, fetchSoilMoistureData, REAL_METRIC_IDS } from "../api/openmeteo";
+import { fetchSoilCarbonData } from "../api/soilgrids";
+import { fetchFloodData } from "../api/flood";
 
 export const METRICS = [
   {
@@ -10,7 +12,7 @@ export const METRICS = [
     description: "Volumetric water content in topsoil (0-30 cm)",
     riskThresholds: { low: 40, high: 80 },
     range: [0, 100],
-    source: "simulated",
+    source: "real",
   },
   {
     id: "ndvi",
@@ -65,7 +67,7 @@ export const METRICS = [
     description: "Organic carbon concentration in topsoil",
     riskThresholds: { low: 1, high: 4 },
     range: [0, 8],
-    source: "simulated",
+    source: "real",
   },
   {
     id: "wind_speed",
@@ -87,7 +89,7 @@ export const METRICS = [
     description: "Composite flood susceptibility score (0-10)",
     riskThresholds: { low: 3, high: 7 },
     range: [0, 10],
-    source: "simulated",
+    source: "real",
   },
   {
     id: "drought_severity",
@@ -225,6 +227,11 @@ export function computeAggregateRisk(farms) {
 }
 
 let _nextId = 1;
+
+export function setNextId(id) {
+  _nextId = id;
+}
+
 export function createFarm(name, group, coords) {
   const metricsData = generateMetricsForRegion(coords);
   return {
@@ -233,6 +240,7 @@ export function createFarm(name, group, coords) {
     group,
     coords,
     metricsData,
+    archived: false,
     details: {
       projectType: "",
       projectLength: "",
@@ -248,18 +256,49 @@ export function createFarm(name, group, coords) {
 
 export async function enrichFarmWithRealData(farm) {
   const { lat, lng } = farm.metricsData.centroid;
-  const realData = await fetchRealWeatherData(lat, lng);
-  if (!realData) return farm;
+
+  // Fetch all real data sources in parallel
+  const [weatherData, soilMoistureData, soilCarbonData, floodData] = await Promise.all([
+    fetchRealWeatherData(lat, lng),
+    fetchSoilMoistureData(lat, lng),
+    fetchSoilCarbonData(lat, lng),
+    fetchFloodData(lat, lng),
+  ]);
 
   const newCurrent = { ...farm.metricsData.current };
   const newTimeSeries = { ...farm.metricsData.timeSeries };
 
-  for (const id of REAL_METRIC_IDS) {
-    if (realData.current[id] !== undefined) {
-      newCurrent[id] = realData.current[id];
+  // Weather data (temperature, precipitation, wind, ET)
+  if (weatherData) {
+    for (const id of REAL_METRIC_IDS) {
+      if (id === "soil_moisture") continue;
+      if (weatherData.current[id] !== undefined) {
+        newCurrent[id] = weatherData.current[id];
+      }
+      if (weatherData.timeSeries[id]) {
+        newTimeSeries[id] = weatherData.timeSeries[id];
+      }
     }
-    if (realData.timeSeries[id]) {
-      newTimeSeries[id] = realData.timeSeries[id];
+  }
+
+  // Soil moisture (Open-Meteo ERA5-Land)
+  if (soilMoistureData && soilMoistureData.current != null) {
+    newCurrent.soil_moisture = soilMoistureData.current;
+    if (soilMoistureData.timeSeries?.length > 0) {
+      newTimeSeries.soil_moisture = soilMoistureData.timeSeries;
+    }
+  }
+
+  // Soil organic carbon (ISRIC SoilGrids - static baseline)
+  if (soilCarbonData && soilCarbonData.soil_carbon != null) {
+    newCurrent.soil_carbon = soilCarbonData.soil_carbon;
+  }
+
+  // Flood risk (Open-Meteo Flood API)
+  if (floodData && floodData.current != null) {
+    newCurrent.flood_risk = floodData.current;
+    if (floodData.timeSeries?.length > 0) {
+      newTimeSeries.flood_risk = floodData.timeSeries;
     }
   }
 

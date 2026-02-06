@@ -9,6 +9,7 @@ export const REAL_METRIC_IDS = new Set([
   "precipitation",
   "wind_speed",
   "evapotranspiration",
+  "soil_moisture",
 ]);
 
 export async function fetchRealWeatherData(lat, lng) {
@@ -83,6 +84,60 @@ export async function fetchRealWeatherData(lat, lng) {
     };
   } catch (err) {
     console.warn("Open-Meteo fetch failed, falling back to simulated data:", err.message);
+    return null;
+  }
+}
+
+// Soil moisture from Open-Meteo ERA5-Land daily data
+export async function fetchSoilMoistureData(lat, lng) {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setFullYear(endDate.getFullYear() - 1);
+
+  const fmt = (d) => d.toISOString().slice(0, 10);
+
+  const url =
+    `https://archive-api.open-meteo.com/v1/archive?` +
+    `latitude=${lat}&longitude=${lng}` +
+    `&start_date=${fmt(startDate)}&end_date=${fmt(endDate)}` +
+    `&daily=soil_moisture_0_to_7cm,soil_moisture_7_to_28cm` +
+    `&timezone=auto`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Soil moisture HTTP ${res.status}`);
+    const json = await res.json();
+    const d = json.daily;
+    if (!d || !d.time || d.time.length === 0) throw new Error("No daily soil data");
+
+    // Aggregate daily values to monthly averages
+    const buckets = {};
+    d.time.forEach((date, i) => {
+      const month = MONTHS[new Date(date).getMonth()];
+      if (!buckets[month]) buckets[month] = [];
+      const shallow = d.soil_moisture_0_to_7cm?.[i] ?? 0;
+      const deep = d.soil_moisture_7_to_28cm?.[i] ?? 0;
+      // Average the two layers, convert m³/m³ to percentage
+      buckets[month].push(((shallow + deep) / 2) * 100);
+    });
+
+    const now = new Date();
+    const timeSeries = [];
+    for (let i = 11; i >= 0; i--) {
+      const dt = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const month = MONTHS[dt.getMonth()];
+      const vals = buckets[month];
+      if (vals && vals.length > 0) {
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        timeSeries.push({ month, value: +avg.toFixed(1) });
+      }
+    }
+
+    const current = timeSeries.length > 0 ? timeSeries[timeSeries.length - 1].value : null;
+
+    return { current, timeSeries };
+  } catch (err) {
+    console.warn("Soil moisture fetch failed:", err.message);
     return null;
   }
 }

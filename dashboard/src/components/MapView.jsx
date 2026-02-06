@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet-draw";
 
@@ -7,7 +7,7 @@ const GROUP_COLORS = [
   "#ec4899", "#14b8a6", "#6366f1", "#d97706", "#8b5cf6",
 ];
 
-export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmSelect }) {
+export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmSelect, hiddenGroups = new Set() }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const drawnItemsRef = useRef(null);
@@ -83,7 +83,8 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    const existingIds = new Set(farms.map((f) => f.id));
+    const visibleFarms = farms.filter((f) => !hiddenGroups.has(f.group));
+    const existingIds = new Set(visibleFarms.map((f) => f.id));
 
     farmLayersRef.current.forEach((layerGroup, id) => {
       if (!existingIds.has(id)) {
@@ -98,7 +99,7 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       groupColorMap[g] = GROUP_COLORS[i % GROUP_COLORS.length];
     });
 
-    farms.forEach((farm) => {
+    visibleFarms.forEach((farm) => {
       const color = groupColorMap[farm.group] || "#dc2626";
       const isSelected = farm.id === selectedFarmId;
 
@@ -157,17 +158,24 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       farmLayersRef.current.set(farm.id, layerGroup);
     });
 
-    // Fit bounds whenever farms are rendered (including on remount)
-    if (farms.length > 0) {
+    // Fit bounds to visible farms
+    if (visibleFarms.length > 0) {
       const bounds = L.latLngBounds([]);
-      farms.forEach((farm) => {
+      visibleFarms.forEach((farm) => {
         farm.coords.forEach((c) => bounds.extend([c.lat, c.lng]));
       });
       if (bounds.isValid()) {
         map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
       }
     }
-  }, [farms, selectedFarmId]);
+  }, [farms, selectedFarmId, hiddenGroups]);
+
+  // Group toggle panel data
+  const groups = [...new Set(farms.map((f) => f.group))];
+  const groupColorMap = {};
+  groups.forEach((g, i) => {
+    groupColorMap[g] = GROUP_COLORS[i % GROUP_COLORS.length];
+  });
 
   return (
     <div className="relative h-full w-full">
@@ -175,6 +183,35 @@ export default function MapView({ farms, selectedFarmId, onPolygonDrawn, onFarmS
       <div className="absolute top-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 text-base text-gray-500 font-medium shadow-sm border border-gray-200">
         Draw polygons to add farm sites
       </div>
+      {/* Group visibility toggles */}
+      {groups.length > 1 && (
+        <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-200" style={{ padding: "12px 16px" }}>
+          <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Groups</p>
+          <div className="flex flex-col gap-1.5">
+            {groups.map((g) => {
+              const isHidden = hiddenGroups.has(g);
+              const count = farms.filter((f) => f.group === g).length;
+              return (
+                <label key={g} className="flex items-center gap-2 cursor-pointer text-sm">
+                  <input
+                    type="checkbox"
+                    checked={!isHidden}
+                    onChange={() => {
+                      // Dispatch custom event for App to handle
+                      window.dispatchEvent(new CustomEvent("toggle-group", { detail: g }));
+                    }}
+                    className="w-4 h-4 rounded accent-red-500"
+                  />
+                  <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: groupColorMap[g] }} />
+                  <span className={`font-medium ${isHidden ? "text-gray-300 line-through" : "text-gray-700"}`}>
+                    {g} ({count})
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

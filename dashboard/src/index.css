@@ -34,6 +34,114 @@
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* ===== Dark Mode ===== */
+[data-theme="dark"] {
+  --color-bg: #111827;
+  --color-surface: #1f2937;
+  --color-text: #f3f4f6;
+  --color-text-muted: #9ca3af;
+  --color-text-faint: #4b5563;
+  --color-border: #374151;
+  --color-border-light: #1f2937;
+  --color-primary: #ef4444;
+  --color-primary-light: #451a1a;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Dark mode Tailwind overrides */
+[data-theme="dark"] .bg-white {
+  background-color: #1f2937 !important;
+}
+[data-theme="dark"] .bg-white\/70 {
+  background-color: rgba(31, 41, 55, 0.7) !important;
+}
+[data-theme="dark"] .bg-white\/90 {
+  background-color: rgba(31, 41, 55, 0.9) !important;
+}
+[data-theme="dark"] .bg-gray-50,
+[data-theme="dark"] .bg-gray-50\/50,
+[data-theme="dark"] .bg-gray-50\/60 {
+  background-color: #283040 !important;
+}
+[data-theme="dark"] .bg-gray-100 {
+  background-color: #374151 !important;
+}
+[data-theme="dark"] .bg-\[\#f5f5f5\] {
+  background-color: #374151 !important;
+}
+[data-theme="dark"] .text-gray-900 {
+  color: #f3f4f6 !important;
+}
+[data-theme="dark"] .text-gray-700 {
+  color: #d1d5db !important;
+}
+[data-theme="dark"] .text-gray-600 {
+  color: #9ca3af !important;
+}
+[data-theme="dark"] .text-gray-500 {
+  color: #9ca3af !important;
+}
+[data-theme="dark"] .text-gray-400 {
+  color: #6b7280 !important;
+}
+[data-theme="dark"] .text-gray-300 {
+  color: #4b5563 !important;
+}
+[data-theme="dark"] .border-gray-100 {
+  border-color: #374151 !important;
+}
+[data-theme="dark"] .border-gray-200 {
+  border-color: #4b5563 !important;
+}
+[data-theme="dark"] .hover\:bg-gray-50:hover {
+  background-color: #283040 !important;
+}
+[data-theme="dark"] .hover\:bg-gray-200:hover {
+  background-color: #4b5563 !important;
+}
+[data-theme="dark"] .hover\:bg-gray-50:hover {
+  background-color: #283040 !important;
+}
+[data-theme="dark"] .hover\:border-gray-100:hover {
+  border-color: #374151 !important;
+}
+/* Dark badge backgrounds */
+[data-theme="dark"] .bg-red-50 {
+  background-color: #451a1a !important;
+}
+[data-theme="dark"] .bg-red-100 {
+  background-color: #5c1e1e !important;
+}
+[data-theme="dark"] .bg-emerald-50 {
+  background-color: #1a3a2a !important;
+}
+[data-theme="dark"] .bg-emerald-100 {
+  background-color: #1a4a30 !important;
+}
+[data-theme="dark"] .bg-amber-50 {
+  background-color: #3a2a1a !important;
+}
+[data-theme="dark"] .bg-rose-50 {
+  background-color: #3a1a1a !important;
+}
+[data-theme="dark"] .bg-rose-100 {
+  background-color: #4a1e1e !important;
+}
+[data-theme="dark"] .bg-sky-50 {
+  background-color: #1a2a3a !important;
+}
+[data-theme="dark"] .bg-sky-100 {
+  background-color: #1a3050 !important;
+}
+/* Dark mode chart/tooltip */
+[data-theme="dark"] .recharts-default-tooltip {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -95,10 +203,20 @@ body {
   border-radius: var(--widget-radius);
 }
 
+[data-theme="dark"] .leaflet-container {
+  background: #1f2937;
+}
+
 .leaflet-control-zoom a {
   background-color: #ffffff !important;
   color: #1a1a2e !important;
   border-color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .leaflet-control-zoom a {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
 }
 
 .leaflet-control-zoom a:hover {
@@ -111,10 +229,21 @@ body {
   border-color: #e5e7eb !important;
 }
 
+[data-theme="dark"] .leaflet-draw-toolbar a {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
 .leaflet-draw-actions a {
   background-color: #ffffff !important;
   color: #1a1a2e !important;
   border-color: #e5e7eb !important;
+}
+
+[data-theme="dark"] .leaflet-draw-actions a {
+  background-color: #374151 !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
 }
 
 .leaflet-draw-actions li:first-child a {
@@ -141,4 +270,12 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a0a0a0;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
